@@ -196,16 +196,19 @@
     
     <div class="filter-bar">
         <button class="filter-btn active" data-filter="all">全部</button>
-        <button class="filter-btn" data-filter="lissajous">利萨如曲线</button>
+        <button class="filter-btn" data-filter="lissajous">利萨如</button>
         <button class="filter-btn" data-filter="spiral">螺旋</button>
-        <button class="filter-btn" data-filter="rose">玫瑰曲线</button>
+        <button class="filter-btn" data-filter="rose">玫瑰</button>
         <button class="filter-btn" data-filter="mandala">曼陀罗</button>
         <button class="filter-btn" data-filter="spirograph">万花尺</button>
-        <button class="filter-btn" data-filter="circles">圆 Packing</button>
-        <button class="filter-btn" data-filter="dragon">龙形曲线</button>
-        <button class="filter-btn" data-filter="phyllotaxis">叶序螺旋</button>
-        <button class="filter-btn" data-filter="harmonograph">谐振仪</button>
-        <button class="filter-btn" data-filter="random">随机组合</button>
+        <button class="filter-btn" data-filter="square">方形</button>
+        <button class="filter-btn" data-filter="star">星形</button>
+        <button class="filter-btn" data-filter="heart">心形</button>
+        <button class="filter-btn" data-filter="fractal">分形树</button>
+        <button class="filter-btn" data-filter="maze">迷宫</button>
+        <button class="filter-btn" data-filter="letter">字母</button>
+        <button class="filter-btn" data-filter="city">城市</button>
+        <button class="filter-btn" data-filter="constellation">星座</button>
     </div>
     
     <main class="gallery" id="gallery">
@@ -228,10 +231,22 @@
             'dragon': '龙形曲线',
             'phyllotaxis': '叶序螺旋',
             'harmonograph': '谐振仪',
-            'random': '随机组合'
+            'random': '随机组合',
+            'square': '方形图案',
+            'zigzag': '之字形',
+            'star': '星形',
+            'heart': '心形',
+            'infinity': '无限符号',
+            'wave': '波浪',
+            'fractal': '分形',
+            'maze': '迷宫',
+            'constellation': '星座',
+            'letter': '字母',
+            'city': '城市',
+            'random_walk': '随机漫步'
         };
         
-        // 所有200个图案文件列表
+        // 所有259个图案文件列表
         const allPatterns = [
             // 利萨如曲线 (30个)
             'lissajous_2_3_0', 'lissajous_3_4_0', 'lissajous_3_5_0', 'lissajous_4_5_0', 'lissajous_5_6_0',
@@ -275,7 +290,32 @@
             'random_21', 'random_22', 'random_23', 'random_24', 'random_25', 'random_26', 'random_27', 'random_28', 'random_29', 'random_30',
             'random_31', 'random_32', 'random_33', 'random_34', 'random_35', 'random_36', 'random_37', 'random_38', 'random_39', 'random_40',
             'random_41', 'random_42', 'random_43', 'random_44', 'random_45', 'random_46', 'random_47', 'random_48', 'random_49', 'random_50',
-            'random_51', 'random_52', 'random_53', 'random_54', 'random_55', 'random_56', 'random_57', 'random_58', 'random_59', 'random_60'
+            'random_51', 'random_52', 'random_53', 'random_54', 'random_55', 'random_56', 'random_57', 'random_58', 'random_59', 'random_60',
+            // 方形螺旋 (9个)
+            'square_spiral_3', 'square_spiral_4', 'square_spiral_5', 'square_spiral_6', 'square_spiral_7',
+            'square_spiral_8', 'square_spiral_9', 'square_spiral_10', 'square_spiral_11',
+            // 方形网格 (5个)
+            'square_grid_5', 'square_grid_8', 'square_grid_10', 'square_grid_15', 'square_grid_20',
+            // 之字形 (5个)
+            'zigzag_10', 'zigzag_15', 'zigzag_20', 'zigzag_30', 'zigzag_50',
+            // 星形 (8个)
+            'star_3point', 'star_4point', 'star_5point', 'star_6point', 'star_7point', 'star_8point', 'star_10point', 'star_12point',
+            // 心形和无限符号 (2个)
+            'heart_shape', 'infinity_symbol',
+            // 波浪 (5个)
+            'wave_3', 'wave_5', 'wave_7', 'wave_10', 'wave_15',
+            // 分形树 (4个)
+            'fractal_tree_d4', 'fractal_tree_d5', 'fractal_tree_d6', 'fractal_tree_d7',
+            // 迷宫 (4个)
+            'maze_5x5', 'maze_8x8', 'maze_10x10', 'maze_12x12',
+            // 星座 (4个)
+            'constellation_20', 'constellation_30', 'constellation_40', 'constellation_50',
+            // 字母 (5个)
+            'letter_A', 'letter_B', 'letter_C', 'letter_S', 'letter_X',
+            // 城市天际线 (3个)
+            'city_skyline_10', 'city_skyline_15', 'city_skyline_20',
+            // 随机漫步 (5个)
+            'random_walk_1', 'random_walk_2', 'random_walk_3', 'random_walk_4', 'random_walk_5'
         ];
         
         let loadedCount = 0;
