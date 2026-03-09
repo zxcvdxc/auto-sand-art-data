@@ -60,12 +60,35 @@
             font-size: 0.9rem;
         }
         
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            border-color: transparent;
+        }
+        
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
-            padding: 40px 20px;
-            max-width: 1600px;
+            padding: 20px;
+            max-width: 1800px;
             margin: 0 auto;
         }
         
@@ -97,7 +120,7 @@
         }
         
         .pattern-name {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 5px;
             text-transform: capitalize;
@@ -106,11 +129,11 @@
         .pattern-type {
             font-size: 0.85rem;
             color: #888;
+            margin-bottom: 10px;
         }
         
         .download-btn {
             display: inline-block;
-            margin-top: 10px;
             padding: 8px 16px;
             background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -124,21 +147,33 @@
             opacity: 0.8;
         }
         
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: #888;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            transition: width 0.3s;
+            z-index: 1000;
+        }
+        
         .footer {
             text-align: center;
             padding: 40px;
             color: #666;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
-        
-        .loading {
-            text-align: center;
-            padding: 100px;
-            color: #888;
-        }
     </style>
 </head>
 <body>
+    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+    
     <header class="header">
         <h1>🏖️ 自动沙画图案库</h1>
         <p>Auto Sand Art Pattern Gallery - 200 个数学生成图案</p>
@@ -159,8 +194,22 @@
         </div>
     </section>
     
+    <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="lissajous">利萨如曲线</button>
+        <button class="filter-btn" data-filter="spiral">螺旋</button>
+        <button class="filter-btn" data-filter="rose">玫瑰曲线</button>
+        <button class="filter-btn" data-filter="mandala">曼陀罗</button>
+        <button class="filter-btn" data-filter="spirograph">万花尺</button>
+        <button class="filter-btn" data-filter="circles">圆 Packing</button>
+        <button class="filter-btn" data-filter="dragon">龙形曲线</button>
+        <button class="filter-btn" data-filter="phyllotaxis">叶序螺旋</button>
+        <button class="filter-btn" data-filter="harmonograph">谐振仪</button>
+        <button class="filter-btn" data-filter="random">随机组合</button>
+    </div>
+    
     <main class="gallery" id="gallery">
-        <div class="loading">加载中...</div>
+        <div class="loading">正在加载 200 个图案...</div>
     </main>
     
     <footer class="footer">
@@ -182,19 +231,54 @@
             'random': '随机组合'
         };
         
-        // 图案文件列表（实际使用时从目录读取或生成）
-        const patterns = [
-            'lissajous_2_3_0', 'lissajous_3_4_0', 'lissajous_3_5_0',
-            'lissajous_4_5_0', 'lissajous_5_6_0', 'spiral_3turns',
-            'spiral_5turns', 'spiral_7turns', 'spiral_10turns',
-            'rose_2_1', 'rose_3_1', 'rose_5_1', 'rose_7_1',
-            'mandala_6fold', 'mandala_8fold', 'mandala_12fold',
-            'spirograph_5_3_2', 'spirograph_7_3_2', 'spirograph_10_3_1',
-            'circles_5', 'circles_10', 'circles_20',
-            'dragon_1', 'dragon_5', 'dragon_10',
-            'phyllotaxis_500', 'phyllotaxis_1000',
-            'harmonograph_1', 'harmonograph_5'
+        // 所有200个图案文件列表
+        const allPatterns = [
+            // 利萨如曲线 (30个)
+            'lissajous_2_3_0', 'lissajous_3_4_0', 'lissajous_3_5_0', 'lissajous_4_5_0', 'lissajous_5_6_0',
+            'lissajous_2_3_157', 'lissajous_3_4_157', 'lissajous_3_5_157', 'lissajous_4_5_157', 'lissajous_5_6_157',
+            'lissajous_2_3_78', 'lissajous_3_4_78', 'lissajous_3_5_78', 'lissajous_5_4_0', 'lissajous_7_5_0',
+            'lissajous_5_8_0', 'lissajous_6_7_0', 'lissajous_7_8_0', 'lissajous_8_9_0', 'lissajous_9_10_0',
+            'lissajous_3_7_0', 'lissajous_4_7_0', 'lissajous_5_7_0', 'lissajous_2_5_0', 'lissajous_3_8_0',
+            'lissajous_4_9_0', 'lissajous_5_9_0', 'lissajous_6_11_0', 'lissajous_7_9_0', 'lissajous_8_11_0',
+            // 螺旋 (10个)
+            'spiral_3turns', 'spiral_4turns', 'spiral_5turns', 'spiral_6turns', 'spiral_7turns',
+            'spiral_8turns', 'spiral_9turns', 'spiral_10turns', 'spiral_11turns', 'spiral_12turns',
+            // 玫瑰曲线 (20个)
+            'rose_2_1', 'rose_3_1', 'rose_4_1', 'rose_5_1', 'rose_6_1', 'rose_7_1', 'rose_8_1',
+            'rose_3_2', 'rose_4_3', 'rose_5_2', 'rose_5_3', 'rose_5_4', 'rose_6_5', 'rose_7_2',
+            'rose_7_3', 'rose_7_4', 'rose_7_5', 'rose_7_6', 'rose_8_3', 'rose_8_5',
+            // 曼陀罗 (15个)
+            'mandala_3fold', 'mandala_4fold', 'mandala_5fold', 'mandala_6fold', 'mandala_7fold',
+            'mandala_8fold', 'mandala_9fold', 'mandala_10fold', 'mandala_12fold', 'mandala_16fold',
+            'mandala_20fold', 'mandala_24fold', 'mandala_32fold', 'mandala_48fold', 'mandala_64fold',
+            // 万花尺 (25个)
+            'spirograph_5_3_2', 'spirograph_7_3_2', 'spirograph_8_5_3', 'spirograph_10_3_1', 'spirograph_10_6_2',
+            'spirograph_12_5_3', 'spirograph_12_7_2', 'spirograph_15_7_3', 'spirograph_15_8_3', 'spirograph_16_9_4',
+            'spirograph_20_7_3', 'spirograph_20_9_4', 'spirograph_21_13_5', 'spirograph_24_11_4', 'spirograph_30_11_4',
+            'spirograph_30_13_5', 'spirograph_40_11_4', 'spirograph_40_13_5', 'spirograph_60_13_5', 'spirograph_60_17_7',
+            'spirograph_72_17_7', 'spirograph_84_19_8', 'spirograph_100_21_9', 'spirograph_120_23_10', 'spirograph_144_25_11',
+            // 圆 Packing (10个)
+            'circles_5', 'circles_6', 'circles_7', 'circles_8', 'circles_9',
+            'circles_10', 'circles_12', 'circles_15', 'circles_18', 'circles_20',
+            // 龙形曲线 (10个)
+            'dragon_1', 'dragon_2', 'dragon_3', 'dragon_4', 'dragon_5',
+            'dragon_6', 'dragon_7', 'dragon_8', 'dragon_9', 'dragon_10',
+            // 叶序螺旋 (10个)
+            'phyllotaxis_200', 'phyllotaxis_300', 'phyllotaxis_400', 'phyllotaxis_500', 'phyllotaxis_600',
+            'phyllotaxis_700', 'phyllotaxis_800', 'phyllotaxis_900', 'phyllotaxis_1000', 'phyllotaxis_1200',
+            // 谐振仪 (10个)
+            'harmonograph_1', 'harmonograph_2', 'harmonograph_3', 'harmonograph_4', 'harmonograph_5',
+            'harmonograph_6', 'harmonograph_7', 'harmonograph_8', 'harmonograph_9', 'harmonograph_10',
+            // 随机组合 (60个)
+            'random_1', 'random_2', 'random_3', 'random_4', 'random_5', 'random_6', 'random_7', 'random_8', 'random_9', 'random_10',
+            'random_11', 'random_12', 'random_13', 'random_14', 'random_15', 'random_16', 'random_17', 'random_18', 'random_19', 'random_20',
+            'random_21', 'random_22', 'random_23', 'random_24', 'random_25', 'random_26', 'random_27', 'random_28', 'random_29', 'random_30',
+            'random_31', 'random_32', 'random_33', 'random_34', 'random_35', 'random_36', 'random_37', 'random_38', 'random_39', 'random_40',
+            'random_41', 'random_42', 'random_43', 'random_44', 'random_45', 'random_46', 'random_47', 'random_48', 'random_49', 'random_50',
+            'random_51', 'random_52', 'random_53', 'random_54', 'random_55', 'random_56', 'random_57', 'random_58', 'random_59', 'random_60'
         ];
+        
+        let loadedCount = 0;
         
         function parseTHR(content) {
             const points = [];
@@ -231,7 +315,7 @@
             ctx.beginPath();
             for (let i = 0; i < points.length; i++) {
                 const x = points[i].x * size;
-                const y = (1 - points[i].y) * size; // Flip Y for canvas
+                const y = (1 - points[i].y) * size;
                 if (i === 0) {
                     ctx.moveTo(x, y);
                 } else {
@@ -240,7 +324,6 @@
             }
             ctx.stroke();
             
-            // Add glow effect
             ctx.shadowColor = '#4ecdc4';
             ctx.shadowBlur = 10;
             ctx.stroke();
@@ -253,9 +336,10 @@
             
             const card = document.createElement('div');
             card.className = 'pattern-card';
+            card.dataset.type = type;
             card.innerHTML = `
                 <div class="canvas-container">
-                    <canvas id="canvas-${name}" width="300" height="300"></canvas>
+                    <canvas id="canvas-${name}" width="280" height="280"></canvas>
                 </div>
                 <div class="pattern-info">
                     <div class="pattern-name">${name.replace(/_/g, ' ')}</div>
@@ -266,39 +350,65 @@
             return card;
         }
         
-        // Load and display patterns
-        async function loadPatterns() {
-            const gallery = document.getElementById('gallery');
-            gallery.innerHTML = '';
-            
-            // Get all pattern files from directory
-            const response = await fetch('thr-files/');
-            const text = await response.text();
-            const files = text.match(/[\w-]+\.thr/g) || [];
-            
-            for (const file of files.slice(0, 50)) { // Show first 50
-                const name = file.replace('.thr', '');
+        async function loadPattern(name, gallery) {
+            try {
+                const response = await fetch(`thr-files/${name}.thr`);
+                if (!response.ok) throw new Error('Failed to load');
+                const content = await response.text();
+                const points = parseTHR(content);
+                
                 const card = createPatternCard(name);
                 gallery.appendChild(card);
                 
-                // Load and draw
-                try {
-                    const thrResponse = await fetch(`thr-files/${file}`);
-                    const content = await thrResponse.text();
-                    const points = parseTHR(content);
-                    
-                    const canvas = document.getElementById(`canvas-${name}`);
-                    if (canvas && points.length > 0) {
-                        drawPattern(canvas, points);
-                    }
-                } catch (e) {
-                    console.error('Failed to load:', file);
+                const canvas = document.getElementById(`canvas-${name}`);
+                if (canvas && points.length > 0) {
+                    drawPattern(canvas, points);
                 }
+                
+                loadedCount++;
+                const progress = (loadedCount / allPatterns.length) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+                
+            } catch (e) {
+                console.error('Failed to load:', name);
             }
         }
         
-        // Load on page load
-        loadPatterns();
+        async function loadAllPatterns() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            loadedCount = 0;
+            
+            // 批量加载，每批20个
+            const batchSize = 20;
+            for (let i = 0; i < allPatterns.length; i += batchSize) {
+                const batch = allPatterns.slice(i, i + batchSize);
+                await Promise.all(batch.map(name => loadPattern(name, gallery)));
+                await new Promise(resolve => setTimeout(resolve, 10)); // 小延迟避免阻塞
+            }
+            
+            document.getElementById('progressBar').style.width = '0%';
+        }
+        
+        // 筛选功能
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                document.querySelectorAll('.pattern-card').forEach(card => {
+                    if (filter === 'all' || card.dataset.type === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // 页面加载时加载所有图案
+        loadAllPatterns();
     </script>
 </body>
 </html>
