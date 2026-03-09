@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动沙画图案库 | Auto Sand Art Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        
+        .stat-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .pattern-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .pattern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .canvas-container {
+            aspect-ratio: 1;
+            background: #0a0a0a;
+            position: relative;
+        }
+        
+        .canvas-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .pattern-info {
+            padding: 15px 20px;
+        }
+        
+        .pattern-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-transform: capitalize;
+        }
+        
+        .pattern-type {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: opacity 0.3s;
+        }
+        
+        .download-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 100px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🏖️ 自动沙画图案库</h1>
+        <p>Auto Sand Art Pattern Gallery - 200 个数学生成图案</p>
+    </header>
+    
+    <section class="stats">
+        <div class="stat-item">
+            <div class="stat-number">200</div>
+            <div class="stat-label">总图案数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">10</div>
+            <div class="stat-label">图案类型</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">创意可能</div>
+        </div>
+    </section>
+    
+    <main class="gallery" id="gallery">
+        <div class="loading">加载中...</div>
+    </main>
+    
+    <footer class="footer">
+        <p>© 2026 Auto Sand Art Project | MIT License</p>
+        <p>Generated with mathematical algorithms</p>
+    </footer>
+    
+    <script>
+        const patternTypes = {
+            'lissajous': '利萨如曲线',
+            'spiral': '螺旋',
+            'rose': '玫瑰曲线',
+            'mandala': '曼陀罗',
+            'spirograph': '万花尺',
+            'circles': '圆 Packing',
+            'dragon': '龙形曲线',
+            'phyllotaxis': '叶序螺旋',
+            'harmonograph': '谐振仪',
+            'random': '随机组合'
+        };
+        
+        // 图案文件列表（实际使用时从目录读取或生成）
+        const patterns = [
+            'lissajous_2_3_0', 'lissajous_3_4_0', 'lissajous_3_5_0',
+            'lissajous_4_5_0', 'lissajous_5_6_0', 'spiral_3turns',
+            'spiral_5turns', 'spiral_7turns', 'spiral_10turns',
+            'rose_2_1', 'rose_3_1', 'rose_5_1', 'rose_7_1',
+            'mandala_6fold', 'mandala_8fold', 'mandala_12fold',
+            'spirograph_5_3_2', 'spirograph_7_3_2', 'spirograph_10_3_1',
+            'circles_5', 'circles_10', 'circles_20',
+            'dragon_1', 'dragon_5', 'dragon_10',
+            'phyllotaxis_500', 'phyllotaxis_1000',
+            'harmonograph_1', 'harmonograph_5'
+        ];
+        
+        function parseTHR(content) {
+            const points = [];
+            const lines = content.split('\n');
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#')) continue;
+                const parts = trimmed.split(',');
+                if (parts.length === 2) {
+                    const x = parseFloat(parts[0]);
+                    const y = parseFloat(parts[1]);
+                    if (!isNaN(x) && !isNaN(y)) {
+                        points.push({x, y});
+                    }
+                }
+            }
+            return points;
+        }
+        
+        function drawPattern(canvas, points) {
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, size, size);
+            
+            if (points.length < 2) return;
+            
+            ctx.strokeStyle = '#4ecdc4';
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.beginPath();
+            for (let i = 0; i < points.length; i++) {
+                const x = points[i].x * size;
+                const y = (1 - points[i].y) * size; // Flip Y for canvas
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Add glow effect
+            ctx.shadowColor = '#4ecdc4';
+            ctx.shadowBlur = 10;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        
+        function createPatternCard(name) {
+            const type = name.split('_')[0];
+            const typeName = patternTypes[type] || type;
+            
+            const card = document.createElement('div');
+            card.className = 'pattern-card';
+            card.innerHTML = `
+                <div class="canvas-container">
+                    <canvas id="canvas-${name}" width="300" height="300"></canvas>
+                </div>
+                <div class="pattern-info">
+                    <div class="pattern-name">${name.replace(/_/g, ' ')}</div>
+                    <div class="pattern-type">${typeName}</div>
+                    <a href="thr-files/${name}.thr" download class="download-btn">下载 .thr</a>
+                </div>
+            `;
+            return card;
+        }
+        
+        // Load and display patterns
+        async function loadPatterns() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            
+            // Get all pattern files from directory
+            const response = await fetch('thr-files/');
+            const text = await response.text();
+            const files = text.match(/[\w-]+\.thr/g) || [];
+            
+            for (const file of files.slice(0, 50)) { // Show first 50
+                const name = file.replace('.thr', '');
+                const card = createPatternCard(name);
+                gallery.appendChild(card);
+                
+                // Load and draw
+                try {
+                    const thrResponse = await fetch(`thr-files/${file}`);
+                    const content = await thrResponse.text();
+                    const points = parseTHR(content);
+                    
+                    const canvas = document.getElementById(`canvas-${name}`);
+                    if (canvas && points.length > 0) {
+                        drawPattern(canvas, points);
+                    }
+                } catch (e) {
+                    console.error('Failed to load:', file);
+                }
+            }
+        }
+        
+        // Load on page load
+        loadPatterns();
+    </script>
+</body>
+</html>
